@@ -2,12 +2,13 @@ service: serverless-podcast
 
 frameworkVersion: "=1.4.0"
 
-custom: ${file(config.yml)}
+custom:
+  bucket: ${file(config.${opt:stage, self:provider.stage}.yml):bucket}
 
 provider:
   name: aws
   runtime: nodejs4.3
-  stage: dev
+  stage: prod
   region: eu-central-1
   iamRoleStatements:
     - Effect: Allow
@@ -27,16 +28,4 @@ functions:
         rules:
           - suffix: .mp3
     environment:
-      BUCKET: ${self:custom.bucket}
-      TITLE: ${self:custom.title}
-      LINK: ${self:custom.link}
-      DESCRIPTION: ${self:custom.description}
-      LANGUAGE: ${self:custom.language}
-      AUTHOR: ${self:custom.author}
-      KEYWORDS: ${self:custom.keywords}
-      EXCPLICIT: ${self:custom.explicit}
-      IMAGE_URL: ${self:custom.imageURL}
-      EMAIL: ${self:custom.email}
-      CATEGORY: ${self:custom.category}
-      SUB_CATEGORIES: ${self:custom.subcategories}
-      BASE_URL: ${self:custom.baseURL}
+      STAGE: ${opt:stage, self:provider.stage}

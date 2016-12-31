@@ -1,19 +1,21 @@
 'use strict';
 
-const AWS = require('aws-sdk');
-const Bluebird = require('bluebird');
-const pug = require('pug');
-const moment = require('moment');
+const fs = require('fs'),
+      Bluebird = require('bluebird'),
+      pug = require('pug'),
+      moment = require('moment'),
+      yaml = require('js-yaml'),
+      AWS = require('aws-sdk');
 
 AWS.config.setPromisesDependency(Bluebird);
-AWS.config.update({
-  region: 'eu-central-1'
-});
+AWS.config.update({ region: 'eu-central-1' });
 
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+const config = yaml.safeLoad(
+  fs.readFileSync(`config.${process.env.STAGE}.yml`, 'utf8'));
 
 module.exports.generateFeed = (event, context, callback) => {
-  s3.listObjects({ Bucket: process.env.BUCKET }).promise()
+  s3.listObjects({ Bucket: config.bucket }).promise()
     // Get metadat for each object
     .then(data => {
       return Bluebird.all(data.Contents.filter(item => {
@@ -21,7 +23,7 @@ module.exports.generateFeed = (event, context, callback) => {
         return matches !== null
       }).map(item => {
         return s3.headObject({
-          Bucket: process.env.BUCKET,
+          Bucket: config.bucket,
           Key: item.Key
         }).promise()
         .then(head => {
@@ -29,7 +31,7 @@ module.exports.generateFeed = (event, context, callback) => {
             title: head.Metadata.title || item.Key.slice(0, -4),
             description: head.Metadata.description,
             pubDate: moment(head.Metadata.date).toDate(),
-            url: process.env.BASE_URL + '/' + item.Key.split(' ').join('+'),
+            url: config.podcast.baseURL + '/' + item.Key.split(' ').join('+'),
             contentType: head.ContentType,
             size: item.Size,
             author: head.Metadata.author,
@@ -43,24 +45,12 @@ module.exports.generateFeed = (event, context, callback) => {
     // Render template and put feed.xml
     .then(episodes => {
       var xml = pug.renderFile('feed.pug', {
-        podcast: {
-          title: process.env.TITLE,
-          link: process.env.LINK,
-          description: process.env.DESCRIPTION,
-          language: process.env.LANGUAGE,
-          author: process.env.AUTHOR,
-          keywords: process.env.KEYWORDS,
-          explicit: process.env.EXPLICIT,
-          imageURL: process.env.IMAGE_URL,
-          email: process.env.EMAIL,
-          category: process.env.CATEGORY,
-          subcategories: (process.env.SUB_CATEGORIES || '').split(','),
-          episodes
-        }
+        podcast: config.podcast,
+        episodes
       });
 
       return s3.putObject({
-        Bucket: process.env.BUCKET,
+        Bucket: config.bucket,
         Key: 'feed.xml',
         Body: xml,
         ContentType: 'application/rss+xml; charset=utf-8'

@@ -12,6 +12,7 @@
   "dependencies": {
     "aws-sdk": "^2.7.9",
     "bluebird": "^3.4.7",
+    "js-yaml": "^3.7.0",
     "moment": "^2.17.1",
     "pug": "^2.0.0-beta6"
   }

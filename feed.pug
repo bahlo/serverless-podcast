@@ -28,7 +28,7 @@ rss(
     each subcategory in podcast.subcategories
       itunes:category(text=podcast.category)
         itunes:category(text=subcategory)
-    each episode in podcast.episodes
+    each episode in episodes
       title= episode.title
       description= episode.description
       pubDate= episode.pubDate
