@@ -4,8 +4,15 @@
   "version": "0.1.0",
   "author": "Arne Bahlo <hallo@arne.me>",
   "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/bahlo/serverless-podcast.git"
+  },
   "dependencies": {
-    "aws-sdk": "^2.7.9"
+    "aws-sdk": "^2.7.9",
+    "bluebird": "^3.4.7",
+    "moment": "^2.17.1",
+    "pug": "^2.0.0-beta6"
   }
 }
-
