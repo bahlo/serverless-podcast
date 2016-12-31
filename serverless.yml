@@ -13,10 +13,13 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - s3:ListObjects
-        - s3:HeadObject
-        - s3:PutObject
-      Resource: arn:aws:s3:::${self:custom.bucket}
+        - s3:*
+        #- s3:ListObjects
+        #- s3:HeadObject
+        #- s3:PutObject
+      Resource:
+        - arn:aws:s3:::${self:custom.bucket}
+        - arn:aws:s3:::${self:custom.bucket}/*
 
 functions:
   generateFeed:
