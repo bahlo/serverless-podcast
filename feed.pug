@@ -1,56 +1,44 @@
 doctype xml
-rss(version="2.0"
-  xmlns:content="http://purl.org/rss/1.0/modules/content/"
-  xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+rss(
   xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
-  xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+  xmlns:admin="http://webns.net/mvcb/"
+  xmlns:atom="http://www.w3.org/2005/Atom/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
   xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
-  xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/"
+  version="2.0"
 )
   channel
-    title= title
-    link= url
-    description= description
-    pubDate= now.toUTCString()
-    lastBuildDate= now.toUTCString()
-    language= language || 'en-US'
-    managingEditor #{author.email} #{author.name}
-    webMaster #{author.email} #{author.name}
-    copyright #{new Date().getFullYear()} #{title}
-    atom:link(rel="self" type="application/rss+xml")
-    image
-      link= url
-      url= imageURL
-      title= title
-    itunes:subtitle= description
-    itunes:author= author.name
-    itunes:summary= description
-    itunes:keywords= keywords
+    title= podcast.title
+    link= podcast.link
+    pubDate= new Date().toUTCString()
+    description= podcast.description
+    language= podcast.language || 'en-US'
+    copyright Copyright © #{new Date().getFullYear()} #{podcast.author}
+    itunes:author= podcast.author
+    itunes:keywords= podcast.keywords
+    itunes:explicit= podcast.explicit ? 'yes' : 'clean'
+    itunes:image(href=podcast.imageURL)
     itunes:owner
-      itunes:name= author.name
-      itunes:email= author.email
-    itunes:image(href=imageURL)
-    itunes:category(text=category)
-    itunes:explicit= explicit ? 'yes' : 'no'
-    each item in entries
-      item
-        title
-          :escape-html= item.title + ' - ' + item.author
-        link= item.url
-        pubDate= item.date.toUTCString()
-        description
-          :escape-html= item.description
-        guid(isPermalink="false")= item.url
-        enclosure(url=item.url length=item.size type=item.contentType)
-        itunes:author= item.author || author.name
-        itunes:subtitle
-          :escape-html= item.description
-        itunes:summary
-          :escape-html= item.description
-        itunes:duration= item.duration
-        itunes:keywords= item.keywords || keywords
-        itunes:image(href=item.imageURL)
-        itunes:explicit= item.explicit ? 'yes' : 'no'
-        itunes:block no
+      itunes:name= podcast.author
+      itunes:email= podcast.email
+    itunes:block no
+    itunes:category(text=podcast.category)
+    each subcategory in podcast.subcategories
+      itunes:category(text=podcast.category)
+        itunes:category(text=subcategory)
+    each episode in podcast.episodes
+      title= episode.title
+      description= episode.description
+      pubDate= episode.pubDate
+      enclosure(url=episode.url length=episode.size type=episode.contentType)
+      link= episode.url
+      guid= episode.url
+      itunes:author= episode.author || podcast.author
+      itunes:subtitle= episode.description
+      itunes:summary= episode.description
+      itunes:explicit= episode.explicit ? 'yes' : 'clean'
+      itunes:duration= episode.duration
+      content:encoded= episode.description
+      itunes:image= episode.imageURL || podcast.imageURL

@@ -27,32 +27,36 @@ module.exports.generateFeed = (event, context, callback) => {
         .then(head => {
           return Bluebird.resolve({
             title: head.Metadata.title || item.Key.slice(0, -4),
-            author: head.Metadata.author,
-            size: item.Size,
-            url: process.env.BASE_URL + '/' + item.Key.split(' ').join('+'),
-            date: moment(head.Metadata.date).toDate(),
-            contentType: head.ContentType,
-            duration: head.Metadata.duration,
             description: head.Metadata.description,
+            pubDate: moment(head.Metadata.date).toDate(),
+            url: process.env.BASE_URL + '/' + item.Key.split(' ').join('+'),
+            contentType: head.ContentType,
+            size: item.Size,
+            author: head.Metadata.author,
+            duration: head.Metadata.duration,
+            imageURL: head.Metadata['image-url'],
+            explicit: head.Metadata.explicit
           });
         });
       }));
     })
     // Render template and put feed.xml
-    .then(entries => {
+    .then(episodes => {
       var xml = pug.renderFile('feed.pug', {
-        title: process.env.TITLE,
-        description: process.env.DESCRIPTION,
-        url: process.env.URL,
-        imageURL: process.env.IMAGE_URL,
-        author: {
-          email: process.env.AUTHOR_EMAIL,
-          name: process.env.AUTHOR_NAME
-        },
-        keywords: process.env.KEYWORDS,
-        category: process.env.CATEGORY,
-        now: new Date(),
-        entries
+        podcast: {
+          title: process.env.TITLE,
+          link: process.env.LINK,
+          description: process.env.DESCRIPTION,
+          language: process.env.LANGUAGE,
+          author: process.env.AUTHOR,
+          keywords: process.env.KEYWORDS,
+          explicit: process.env.EXPLICIT,
+          imageURL: process.env.IMAGE_URL,
+          email: process.env.EMAIL,
+          category: process.env.CATEGORY,
+          subcategories: (process.env.SUB_CATEGORIES || '').split(','),
+          episodes
+        }
       });
 
       return s3.putObject({

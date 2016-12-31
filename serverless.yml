@@ -28,11 +28,14 @@ functions:
     environment:
       BUCKET: ${self:custom.bucket}
       TITLE: ${self:custom.title}
+      LINK: ${self:custom.link}
       DESCRIPTION: ${self:custom.description}
-      URL: ${self:custom.url}
-      BASE_URL: ${self:custom.baseURL}
-      IMAGE_URL: ${self:custom.imageURL}
-      AUTHOR_EMAIL: ${self:custom.author.email}
-      AUTHOR_NAME: ${self:custom.author.name}
+      LANGUAGE: ${self:custom.language}
+      AUTHOR: ${self:custom.author}
       KEYWORDS: ${self:custom.keywords}
+      EXCPLICIT: ${self:custom.explicit}
+      IMAGE_URL: ${self:custom.imageURL}
+      EMAIL: ${self:custom.email}
       CATEGORY: ${self:custom.category}
+      SUB_CATEGORIES: ${self:custom.subcategories}
+      BASE_URL: ${self:custom.baseURL}
