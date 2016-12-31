@@ -9,9 +9,6 @@ explicit: false # Default: false
 imageURL: https://awesome.podcast/cover.jpg
 email: hallo@arne.me
 baseURL: https://awesome.podcast # Will be prependet to /<episode>.mp3
-keywords:
-  - some
-  - nice
-  - keywords
+keywords: some,nice,keywords # Seperated by comma
 category: Technology
-subcategories: Gadgets
+subcategories: Gadgets # Seperated by comma
