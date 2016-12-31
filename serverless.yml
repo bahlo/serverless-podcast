@@ -1,0 +1,38 @@
+service: serverless-podcast
+
+frameworkVersion: "=1.4.0"
+
+custom: ${file(config.yml)}
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  stage: dev
+  region: eu-central-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:ListObjects
+        - s3:PutObject
+      Resource: arn:aws:s3:::${self:custom.bucket}
+
+functions:
+  generateFeed:
+    handler: handler.generateFeed
+    events:
+      - s3:
+        bucket: ${self:custom.bucket}
+        event: s3:*
+        rules:
+          - suffix: .mp3
+    environment:
+      BUCKET: ${self:custom.bucket}
+      TITLE: ${self:custom.title}
+      DESCRIPTION: ${self:custom.description}
+      URL: ${self:custom.url}
+      BASE_URL: ${self:custom.baseURL}
+      IMAGE_URL: ${self:custom.imageURL}
+      AUTHOR_EMAIL: ${self:custom.author.email}
+      AUTHOR_NAME: ${self:custom.author.name}
+      KEYWORDS: ${self:custom.keywords}
+      CATEGORY: ${self:custom.category}

@@ -1,0 +1,15 @@
+bucket: my-bucket
+
+title: An awesome podcast
+description: With an awesome description
+url: https://awesome.podcast
+baseURL: https://awesome.podcast
+imageURL: https://awesome.podcast/cover.jpg
+author:
+  email: hallo@arne.me
+  name: Arne Bahlo
+keywords:
+  - some
+  - nice
+  - keywords
+category: Technology

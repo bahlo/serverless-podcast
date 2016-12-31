@@ -1,0 +1,11 @@
+{
+  "name": "serverless-podcast",
+  "description": "Easy podcasting using serverless and S3",
+  "version": "0.1.0",
+  "author": "Arne Bahlo <hallo@arne.me>",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.7.9"
+  }
+}
+
