@@ -28,7 +28,7 @@ Now is your chance, it doesn't get easier than going serverless.
 ## Setup
 
 1. Run `npm install`
-2. Edit `config.yml` to your needs
+2. Copy `config.sample.yml` to `config.yml` and edit to your needs
 3. Run `serverless deploy`
 
 ## Usage

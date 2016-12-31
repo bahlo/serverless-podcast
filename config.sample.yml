@@ -1,0 +1,17 @@
+bucket: my-bucket
+
+title: An awesome podcast
+link: https://awesome.podcast
+description: With an awesome description
+language: en-US # Default: en-US
+author: Arne Bahlo
+explicit: false # Default: false
+imageURL: https://awesome.podcast/cover.jpg
+email: hallo@arne.me
+baseURL: https://awesome.podcast # Will be prependet to /<episode>.mp3
+keywords:
+  - some
+  - nice
+  - keywords
+category: Technology
+subcategories: Gadgets
