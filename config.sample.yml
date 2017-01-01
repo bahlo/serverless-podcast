@@ -18,3 +18,4 @@ podcast:
   category: Technology
   subcategories:
     - Gadgets
+  imprintURL: https://awesome.podcast/imprint # Will be in the footer of index.html
