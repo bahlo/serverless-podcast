@@ -26,21 +26,14 @@ functions:
     handler: handler.generateFeed
     events:
       - s3:
-        bucket: ${self:custom.bucket}
-        event: s3:*
-        rules:
-          - suffix: .mp3
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .mp3
+      - s3:
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectRemoved:*
+          rules:
+            - suffix: .mp3
     environment:
       STAGE: ${opt:stage, self:provider.stage}
-
-resources:
-  Resources:
-    bucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ${self:custom.bucket}
-        AccessControl: PublicRead
-        WebsiteConfiguration:
-          IndexDocument: index.html
-          ErrorDocument: error.html
-
