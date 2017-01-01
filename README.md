@@ -13,6 +13,8 @@ Now is your chance, it doesn't get easier than going serverless.
 1. Run `npm install`
 2. Copy `config.sample.yml` to `config.prod.yml` and edit to your needs
 3. Run `serverless deploy`
+4. Run `serverless invoke updateIndex` to generate `index.html` (this is only
+   needed after config changes).
 
 You need to configure your bucket further (which seems
 [not possible](http://forum.serverless.com/t/add-additional-configuration-to-an-s3-bucket-with-a-dynamic-name/705) with serverless at the moment).
