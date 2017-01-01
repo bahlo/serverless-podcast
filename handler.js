@@ -7,9 +7,15 @@ const fs = require('fs'),
       yaml = require('js-yaml'),
       AWS = require('aws-sdk');
 
-AWS.config.setPromisesDependency(Bluebird);
+const config = yaml.safeLoad(
+  fs.readFileSync(`config.${process.env.STAGE}.yml`, 'utf8'));
 
-function listEpisodes(s3, config) {
+AWS.config.setPromisesDependency(Bluebird);
+AWS.config.update({ region: config.region });
+
+const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
+const listEpisodes = (s3, config) => {
   // Get all objects
   return s3
     .listObjects({ Bucket: config.bucket }).promise()
@@ -22,7 +28,7 @@ function listEpisodes(s3, config) {
     });
 }
 
-function fetchMetadata(s3, config, episodes) {
+const fetchMetadata = (s3, config, episodes) => {
   return Bluebird.all(episodes.map(item => {
     const params = {
       Bucket: config.bucket,
@@ -48,7 +54,7 @@ function fetchMetadata(s3, config, episodes) {
   }));
 }
 
-function sortEpisodes(episodes) {
+const sortEpisodes = (episodes) => {
   return episodes.sort((a, b) => {
     if (a.pubDate.getTime() > b.pubDate.getTime()) {
       return -1;
@@ -61,7 +67,7 @@ function sortEpisodes(episodes) {
   })
 }
 
-function updateFeed(s3, config, episodes) {
+const updateFeed = (s3, config, episodes) => {
   const xml = pug.renderFile('feed.pug', {
     podcast: config.podcast,
     episodes
@@ -76,12 +82,19 @@ function updateFeed(s3, config, episodes) {
   }).promise()
 }
 
-module.exports.generateFeed = (event, context, callback) => {
-  const config = yaml.safeLoad(
-    fs.readFileSync(`config.${process.env.STAGE}.yml`, 'utf8'));
-  AWS.config.update({ region: config.region });
-  const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+const updateIndex = (s3, config) => {
+  const html = pug.renderFile('index.pug', config.podcast)
 
+  return s3.putObject({
+    Bucket: config.bucket,
+    Key: 'index.html',
+    Body: html,
+    ContentType: 'text/html; charset=utf-8',
+    ACL: 'public-read'
+  }).promise()
+}
+
+module.exports.updateFeed = (event, context, callback) => {
   listEpisodes(s3, config)
     .then(episodes => fetchMetadata(s3, config, episodes))
     .then(episodes => sortEpisodes(episodes))
@@ -89,3 +102,9 @@ module.exports.generateFeed = (event, context, callback) => {
     .then(() => { callback(null) })
     .catch(err => { callback(err); });
 };
+
+module.exports.updateIndex = (event, context, callback) => {
+  updateIndex(s3, config)
+    .then(() => { callback(null) })
+    .catch(err => { callback(err); });
+}

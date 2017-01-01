@@ -22,8 +22,8 @@ provider:
         - arn:aws:s3:::${self:custom.bucket}/*
 
 functions:
-  generateFeed:
-    handler: handler.generateFeed
+  updateFeed:
+    handler: handler.updateFeed
     events:
       - s3:
           bucket: ${self:custom.bucket}
@@ -35,5 +35,9 @@ functions:
           event: s3:ObjectRemoved:*
           rules:
             - suffix: .mp3
+    environment:
+      STAGE: ${opt:stage, self:provider.stage}
+  updateIndex:
+    handler: handler.updateIndex
     environment:
       STAGE: ${opt:stage, self:provider.stage}
