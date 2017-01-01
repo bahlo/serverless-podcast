@@ -16,7 +16,7 @@ const config = yaml.safeLoad(
 
 module.exports.generateFeed = (event, context, callback) => {
   s3.listObjects({ Bucket: config.bucket }).promise()
-    // Get metadat for each object
+    // Get metadata for each object
     .then(data => {
       return Bluebird.all(data.Contents.filter(item => {
         var matches = item.Key.match(/.mp3$/);
@@ -27,7 +27,7 @@ module.exports.generateFeed = (event, context, callback) => {
           Key: item.Key
         }).promise()
         .then(head => {
-          return Bluebird.resolve({
+          return {
             title: head.Metadata.title || item.Key.slice(0, -4),
             description: head.Metadata.description,
             pubDate: moment(head.Metadata.date).toDate(),
@@ -38,9 +38,22 @@ module.exports.generateFeed = (event, context, callback) => {
             duration: head.Metadata.duration,
             imageURL: head.Metadata['image-url'],
             explicit: head.Metadata.explicit
-          });
+          };
         });
-      }));
+      }))
+      .then(episodes => {
+        // Sort new to old
+        return episodes.sort((a, b) => {
+          if (a.pubDate.getTime() > b.pubDate.getTime()) {
+            return -1;
+          } else if (a.pubDate.getTime() < b.pubDate.getTime()) {
+            return 1;
+          }
+
+          // If equal
+          return 0;
+        })
+      });
     })
     // Render template and put feed.xml
     .then(episodes => {
