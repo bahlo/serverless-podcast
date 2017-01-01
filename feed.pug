@@ -29,16 +29,17 @@ rss(
       itunes:category(text=podcast.category)
         itunes:category(text=subcategory)
     each episode in episodes
-      title= episode.title
-      description= episode.description
-      pubDate= episode.pubDate
-      enclosure(url=episode.url length=episode.size type=episode.contentType)
-      link= episode.url
-      guid= episode.url
-      itunes:author= episode.author || podcast.author
-      itunes:subtitle= episode.description
-      itunes:summary= episode.description
-      itunes:explicit= episode.explicit ? 'yes' : 'clean'
-      itunes:duration= episode.duration
-      content:encoded= episode.description
-      itunes:image= episode.imageURL || podcast.imageURL
+      item
+        title= episode.title
+        description= episode.description
+        pubDate= episode.pubDate
+        enclosure(url=episode.url length=episode.size type=episode.contentType)
+        link= episode.url
+        guid= episode.url
+        itunes:author= episode.author || podcast.author
+        itunes:subtitle= episode.description
+        itunes:summary= episode.description
+        itunes:explicit= episode.explicit ? 'yes' : 'clean'
+        itunes:duration= episode.duration
+        content:encoded= episode.description
+        itunes:image= episode.imageURL || podcast.imageURL
