@@ -1,4 +1,5 @@
 bucket: my-bucket
+region: us-west-1
 
 podcast:
   title: An awesome podcast
