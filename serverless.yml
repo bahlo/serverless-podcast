@@ -32,3 +32,15 @@ functions:
           - suffix: .mp3
     environment:
       STAGE: ${opt:stage, self:provider.stage}
+
+resources:
+  Resources:
+    bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucket}
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: error.html
+

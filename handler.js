@@ -53,7 +53,8 @@ module.exports.generateFeed = (event, context, callback) => {
         Bucket: config.bucket,
         Key: 'feed.xml',
         Body: xml,
-        ContentType: 'application/rss+xml; charset=utf-8'
+        ContentType: 'application/rss+xml; charset=utf-8',
+        ACL: 'public-read'
       }).promise()
     })
     .then(() => {
