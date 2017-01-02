@@ -29,11 +29,13 @@ functions:
           bucket: ${self:custom.bucket}
           event: s3:ObjectCreated:*
           rules:
+            - prefix: 'episodes/'
             - suffix: .mp3
       - s3:
           bucket: ${self:custom.bucket}
           event: s3:ObjectRemoved:*
           rules:
+            - prefix: 'episodes/'
             - suffix: .mp3
     environment:
       STAGE: ${opt:stage, self:provider.stage}
