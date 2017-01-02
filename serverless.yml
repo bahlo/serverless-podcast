@@ -37,7 +37,7 @@ functions:
             - suffix: .mp3
     environment:
       STAGE: ${opt:stage, self:provider.stage}
-  updateIndex:
-    handler: handler.updateIndex
+  updateHTML:
+    handler: handler.updateHTML
     environment:
       STAGE: ${opt:stage, self:provider.stage}

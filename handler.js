@@ -68,7 +68,7 @@ const sortEpisodes = (episodes) => {
 }
 
 const updateFeed = (s3, config, episodes) => {
-  const xml = pug.renderFile('feed.pug', {
+  const xml = pug.renderFile('views/feed.pug', {
     podcast: config.podcast,
     episodes
   });
@@ -83,14 +83,26 @@ const updateFeed = (s3, config, episodes) => {
 }
 
 const updateIndex = (s3, config) => {
-  const html = pug.renderFile('index.pug', config.podcast)
+  const html = pug.renderFile('views/index.pug', config.podcast)
 
   return s3.putObject({
-    Bucket: config.bucket,
-    Key: 'index.html',
-    Body: html,
+    Bucket:      config.bucket,
+    Key:         'index.html',
+    Body:        html,
     ContentType: 'text/html; charset=utf-8',
-    ACL: 'public-read'
+    ACL:         'public-read'
+  }).promise()
+}
+
+const updateError = (s3, config) => {
+  const html = pug.renderFile('views/error.pug', config.podcast)
+
+  return s3.putObject({
+    Bucket:      config.bucket,
+    Key:         'error.html',
+    Body:        html,
+    ContentType: 'text/html; charset=utf-8',
+    ACL:         'public-read'
   }).promise()
 }
 
@@ -103,8 +115,10 @@ module.exports.updateFeed = (event, context, callback) => {
     .catch(err => { callback(err); });
 };
 
-module.exports.updateIndex = (event, context, callback) => {
-  updateIndex(s3, config)
-    .then(() => { callback(null) })
+module.exports.updateHTML = (event, context, callback) => {
+  Bluebird.all([
+    updateIndex(s3, config),
+    updateError(s3, config)
+  ]).then(() => { callback(null) })
     .catch(err => { callback(err); });
 }
