@@ -1,10 +1,10 @@
 'use strict';
 
-const fs        = require('fs'),
-      Bluebird  = require('bluebird'),
-      yaml      = require('js-yaml'),
-      AWS       = require('aws-sdk'),
-      Episodes  = require('./lib/episodes'),
+const fs       = require('fs'),
+      Bluebird = require('bluebird'),
+      yaml     = require('js-yaml'),
+      AWS      = require('aws-sdk');
+const Episodes  = require('./lib/episodes'),
       Templates = require('./lib/templates');
 
 const config = yaml.safeLoad(

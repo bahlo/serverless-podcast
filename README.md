@@ -13,30 +13,14 @@ Now is your chance, it doesn't get easier than going serverless.
 1. Run `npm install`
 2. Copy `config.sample.yml` to `config.prod.yml` and edit to your needs
 3. Run `serverless deploy`
-4. Run `serverless invoke updateIndex` to generate `index.html` (this is only
+4. Run `serverless invoke updateHTML` to generate HTML files (this is only
    needed after config changes).
 
 You need to configure your bucket further (which seems
 [not possible](http://forum.serverless.com/t/add-additional-configuration-to-an-s3-bucket-with-a-dynamic-name/705) with serverless at the moment).
-
-1. Enable _Static Website Hosting_ and set _Index Document_ to `index.html` and
+Enable _Static Website Hosting_ and set _Index Document_ to `index.html` and
 _Error Document_ to `error.html`.
-2. Go to _Permissions_ and set the Bucket Policy to the following:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "PublicReadGetObject",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::my-bucket/*"
-        }
-    ]
-}
-```
+It's also recommendet to use CloudFront to cache episodes and add HTTPS.
 
 ## Usage
 
