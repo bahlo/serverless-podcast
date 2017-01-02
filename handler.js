@@ -5,7 +5,8 @@ const fs       = require('fs'),
       yaml     = require('js-yaml'),
       AWS      = require('aws-sdk');
 const Episodes  = require('./lib/episodes'),
-      Templates = require('./lib/templates');
+      Templates = require('./lib/templates'),
+      Auth      = require('./lib/auth');
 
 const config = yaml.safeLoad(
   fs.readFileSync(`config.${process.env.STAGE}.yml`, 'utf8'));
@@ -24,11 +25,30 @@ module.exports.updateFeed = (event, context, callback) => {
     .catch(err => { callback(err); });
 };
 
-module.exports.updateHTML = (event, context, callback) => {
+module.exports.updateIndexError = (event, context, callback) => {
   Bluebird.all([
     Templates.updateIndex(s3, config),
     Templates.updateError(s3, config),
-    Templates.updatePublish(s3, config)
   ]).then(() => { callback(null) })
+    .catch(err => { callback(err); });
+}
+
+module.exports.updatePublish = (event, context, callback) => {
+  const expireDate   = Auth.expireDate(),
+        credential   = [config.accessKeyID, expireDate.format('YYYYMMDD'),
+          config.region, 's3/aws4_request'].join('/'),
+        policyBase64 = Auth.policyBase64(config.bucket, expireDate,
+          credential),
+        signature    = Auth.signature(expireDate, config.region, policyBase64,
+          config.secretAccessKey);
+
+  Templates.updatePublish(s3, config, {
+    expireDate: {
+      short: expireDate.format('YYYYMMDD'),
+      long: expireDate.format('YYYYMMDDT000000[Z]')
+    },
+    policyBase64,
+    signature
+  }).then(() => { callback(null) })
     .catch(err => { callback(err); });
 }

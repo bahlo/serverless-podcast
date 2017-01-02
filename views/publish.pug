@@ -5,7 +5,7 @@ html
   meta(name="viewport" content="width=device-width, initial-scale=1")
   link(rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css")
   script(type="text/javascript").
-    function onSubmit(e) {
+    function onSubmit() {
       // Set #date value
       document.getElementById('date').value =
         new Date(
@@ -15,10 +15,10 @@ html
       // Build x-amz-credential field
       var accessKey = document.getElementById('access-key').value;
       document.getElementById('aws-credential').value =
-        accessKey + '/#{policyDate}/#{region}/s3/aws4_request';
+        accessKey + '/#{auth.expireDate.short}/#{config.region}/s3/aws4_request';
       // Update localStorage
       window.localStorage.setItem('aws-access-key', accessKey);
-      return false; // TODO: Set to true to enable submit
+      return true;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -26,29 +26,26 @@ html
       document.getElementById('access-key').value =
         window.localStorage.getItem('aws-access-key');
       // Fill out date and time fields
+      // TODO: Use local time instead of UTC
       var dateTime = new Date().toJSON().slice(0, 16).split('T');
       document.getElementById('date-helper').value = dateTime[0];
       document.getElementById('time-helper').value = dateTime[1];
     });
   body
     section.pa4
-      h1.f3.f2-m.f1-l Publish episode to #{podcast.title}
-      form.cf.pa3.black-80(action="https://#{bucket}.s3.amazonaws.com/" method="POST" enctype="multipart/form-data" onsubmit="return onSubmit()")
-        // File
-        input(type="hidden" name="key" value="episodes/${filename}")
+      h1.f3.f2-m.f1-l Publish episode to #{config.podcast.title}
+      form.cf.pa3.black-80(action="http://"+config.bucket+".s3.amazonaws.com/"
+        method="POST" enctype="multipart/form-data" onsubmit="return onSubmit()")
         input(type="hidden" name="acl" value="public-read")
-        input(type="hidden" name="success_action_redirect" value="#{baseURL}/publish.html?success=true")
         input(type="hidden" name="Content-Type" value="audio/mpeg")
-
-        // Credentials
+        input(type="hidden" name="key" value="episodes/${filename}")
+        input(type="hidden" name="policy" value=auth.policyBase64)
+        input(type="hidden" name="success_action_redirect" value=config.podcast.baseURL + "/publish.html?success=true")
         input(type="hidden" name="x-amz-algorithm" value="AWS4-HMAC-SHA256")
-        input(type="hidden" name="x-amz-date" value="#{policyDate}")
-        input(type="hidden" name="policy" value="#{policyDocument}")
-        input(type="hidden" name="x-amz-signature" value="#{signature}")
-
-        // Filled out by JS
-        input(type="hidden" id="date" name="x-amz-meta-date" required)
         input(type="hidden" id="aws-credential" name="x-amz-credential" required)
+        input(type="hidden" name="x-amz-date" value=auth.expireDate.long)
+        input(type="hidden" name="x-amz-signature" value=auth.signature)
+        input(type="hidden" id="date" name="x-amz-meta-date" required)
 
         // User input
         div.fl.w-50.w-100-m.pv3
@@ -60,7 +57,7 @@ html
           div.measure
             label.f6.b.db.mb2(for="description") Description
               span.normal.black-60.ph1 (optional)
-            input#description.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="text" aria-describedby="description-desc" name="x-amz-meta-description" placeholder="Title" required)
+            input#description.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="text" aria-describedby="description-desc" name="x-amz-meta-description" placeholder="Description")
             small#description-desc.f6.black-60.db.mb2 The description of the episode.
 
           div.measure
@@ -73,34 +70,33 @@ html
           div.measure
             label.f6.b.db.mb2(for="date-helper") Date
             input#date-helper.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="date" aria-describedby="date-helper-desc")
-            small#date-helper-desc.f6.black-60.db.mb2 The date of the episode (yyyy-mm-dd).
+            small#date-helper-desc.f6.black-60.db.mb2 The date of the episode.
 
           div.measure
             label.f6.b.db.mb2(for="time-helper") Time
             input#time-helper.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="time" aria-describedby="time-helper-desc")
-            small#time-helper-desc.f6.black-60.db.mb2 The time of the episode (hh:mm).
+            small#time-helper-desc.f6.black-60.db.mb2 The time of the episode.
 
           div.measure
             label.f6.b.db.mb2(for="duration") Duration
-            input#duration.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="text"
-            aria-describedby="duration-desc" name="x-amz-meta-duration" pattern="\d+:\d+" placeholder="23:42" required)
+            input#duration.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="text" aria-describedby="duration-desc" name="x-amz-meta-duration" pattern="\\d+:\\d+" placeholder="23:42" required)
             small#duration-desc.f6.black-60.db.mb2 The duration of the episode (mm:ss).
 
         div.fl.w-50.w-100-m.pv3
           div.measure
             label.f6.b.db.mb2(for="access-key") Access Key
-            input#access-key.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="text" aria-describedby="access-key-desc" name="AWSAccessKeyId" placeholder="AWS Access Key Id" required)
+            input#access-key.input-reset.ba.b--black-20.pa2.mb2.db.w-100(type="text" aria-describedby="access-key-desc" placeholder="AWS Access Key Id" required)
             small#access-key-desc.f6.black-60.db.mb2 The AWS Access Key.
 
         div.fl.w-50.w-100-m.pv3
           div.measure
             label.f6.b.db.mb2(for="file") File
-            input#file.input-reset.ba.b--black-20.pa2.mb2.db.w-100(name="file" type="file" accept="media/mp3" required)
+            input#file.input-reset.ba.b--black-20.pa2.mb2.db.w-100(name="file" type="file" accept="audio/mp3" required)
             small#file-desc.f6.black-60.db.mb2 The audio file.
 
         input.bn.button-reset.f6.link.dim.br1.ph3.pv2.mb2.dib.white.bg-near-black.pointer(type="submit" value="Publish episode")
     footer.ph3.ph5-m.ph6-l.light-silver.pb4
       small.f6.db.tc
-        | © #{new Date().getFullYear()} #{podcast.author}
-        if podcast.imprintURL
-          a.f6.dib.ph2.link.silver.dim(href=podcast.imprintURL) Imprint
+        | © #{new Date().getFullYear()} #{config.podcast.author}
+        if config.podcast.imprintURL
+          a.f6.dib.ph2.link.silver.dim(href=config.podcast.imprintURL) Imprint

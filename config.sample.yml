@@ -1,5 +1,6 @@
 bucket: my-bucket
 region: us-west-1
+accessKey: 'abcdef'
 
 podcast:
   title: An awesome podcast
