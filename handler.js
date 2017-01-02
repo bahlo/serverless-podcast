@@ -27,7 +27,8 @@ module.exports.updateFeed = (event, context, callback) => {
 module.exports.updateHTML = (event, context, callback) => {
   Bluebird.all([
     Templates.updateIndex(s3, config),
-    Templates.updateError(s3, config)
+    Templates.updateError(s3, config),
+    Templates.updatePublish(s3, config)
   ]).then(() => { callback(null) })
     .catch(err => { callback(err); });
 }
