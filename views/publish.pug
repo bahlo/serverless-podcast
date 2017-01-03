@@ -5,6 +5,19 @@ html
   meta(name="viewport" content="width=device-width, initial-scale=1")
   link(rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css")
   script(type="text/javascript").
+    function escapeFields(fields) {
+      for (var i = 0; i < fields.length; i++) {
+        fields[i].value = fields[i].value
+          .replace(/ä/g, '&auml;')
+          .replace(/Ä/g, '&Auml;')
+          .replace(/ü/g, '&uuml;')
+          .replace(/Ü/g, '&Uuml;')
+          .replace(/ö/g, '&ouml;')
+          .replace(/Ö/g, '&Ouml;')
+          .replace(/ß/g, '&szlig;');
+      }
+    }
+
     function onSubmit() {
       // Set #date value
       document.getElementById('date').value =
@@ -12,6 +25,13 @@ html
           document.getElementById('date-helper').value + 'T' +
           document.getElementById('time-helper').value
         ).toUTCString();
+
+      // Escape text values
+      escapeFields([
+        document.getElementById('title'),
+        document.getElementById('description'),
+        document.getElementById('author')
+      ]);
 
       // Build x-amz-credential field
       var accessKey = document.getElementById('access-key').value;
