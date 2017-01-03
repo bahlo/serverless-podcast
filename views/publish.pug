@@ -47,7 +47,7 @@ html
   body
     section.pa4
       h1.f3.f2-m.f1-l Publish episode to #{config.podcast.title}
-      form.cf.pa3.black-80(action="http://"+config.bucket+".s3.amazonaws.com/"
+      form.cf.pa3.black-80(action="https://"+config.bucket+".s3.amazonaws.com/"
         method="POST" enctype="multipart/form-data" onsubmit="return onSubmit()")
         input(type="hidden" name="acl" value="public-read")
         input(type="hidden" name="Content-Type" value="audio/mpeg")
