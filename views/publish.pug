@@ -12,13 +12,24 @@ html
           document.getElementById('date-helper').value + 'T' +
           document.getElementById('time-helper').value
         ).toUTCString();
+
       // Build x-amz-credential field
       var accessKey = document.getElementById('access-key').value;
       document.getElementById('aws-credential').value =
         accessKey + '/#{auth.expireDate.short}/#{config.region}/s3/aws4_request';
+
       // Update localStorage
       window.localStorage.setItem('aws-access-key', accessKey);
+
       return true;
+    }
+
+    function pad(num) {
+      if (num < 10) {
+        return '0' + num;
+      }
+
+      return num;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -26,10 +37,12 @@ html
       document.getElementById('access-key').value =
         window.localStorage.getItem('aws-access-key');
       // Fill out date and time fields
-      // TODO: Use local time instead of UTC
-      var dateTime = new Date().toJSON().slice(0, 16).split('T');
-      document.getElementById('date-helper').value = dateTime[0];
-      document.getElementById('time-helper').value = dateTime[1];
+      const now = new Date();
+      document.getElementById('date-helper').value =
+        now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' +
+        pad(now.getDate());
+      document.getElementById('time-helper').value =
+        pad(now.getHours()) + ':' + pad(now.getMinutes());
     });
   body
     section.pa4
