@@ -16,6 +16,7 @@ rss(
     description= podcast.description
     language= podcast.language || 'en-US'
     copyright Copyright © #{new Date().getFullYear()} #{podcast.author}
+    generator https://github.com/bahlo/serverless-podcast
     itunes:author= podcast.author
     itunes:keywords= podcast.keywords
     itunes:explicit= podcast.explicit ? 'yes' : 'clean'
