@@ -73,7 +73,7 @@ html
         input(type="hidden" name="Content-Type" value="audio/mpeg")
         input(type="hidden" name="key" value="episodes/${filename}")
         input(type="hidden" name="policy" value=auth.policyBase64)
-        input(type="hidden" name="success_action_redirect" value=config.podcast.baseURL + "/publish.html?success=true")
+        input(type="hidden" name="success_action_redirect" value=config.podcast.baseURL + "/success.html")
         input(type="hidden" name="x-amz-algorithm" value="AWS4-HMAC-SHA256")
         input(type="hidden" id="aws-credential" name="x-amz-credential" required)
         input(type="hidden" name="x-amz-date" value=auth.expireDate.long)

@@ -14,7 +14,7 @@ Now is your chance, it doesn't get easier than going serverless.
 1. Run `npm install`
 2. Copy `config.sample.yml` to `config.prod.yml` and edit to your needs
 3. Run `serverless deploy`
-4. Run `serverless invoke updateIndexError` to generate the HTML files 
+4. Run `serverless invoke updateHTML` to generate the HTML files
    (this is only needed after config changes).
 5. Run `serverless invoke updatePublish` to generate publish page (done at 00:00 every day)
 

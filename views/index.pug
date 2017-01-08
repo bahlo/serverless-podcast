@@ -15,8 +15,4 @@ html
         if iTunesURL
           a.f6.link.dim.br1.ph3.pv2.mb2.dib.white.bg-black(href=iTunesURL) iTunes
         a.f6.link.dim.br1.ph3.pv2.mb2.dib.white.bg-orange(href=baseURL+'/feed.xml') Feed
-    footer.ph3.ph5-m.ph6-l.light-silver
-      small.f6.db.tc
-        | © #{new Date().getFullYear()} #{author}
-        if imprintURL
-          a.f6.dib.ph2.link.silver.dim(href=imprintURL) Imprint
+    include includes/footer
