@@ -5,10 +5,7 @@
   "author": "Arne Bahlo <hallo@arne.me>",
   "license": "MIT",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/bahlo/serverless-podcast.git"
-  },
+  "repository": "git+ssh://git@github.com/bahlo/serverless-podcast.git",
   "dependencies": {
     "aws-sdk": "^2.7.9",
     "bluebird": "^3.4.7",
