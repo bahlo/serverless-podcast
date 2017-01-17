@@ -20,7 +20,7 @@ rss(
     itunes:author= podcast.author
     itunes:keywords= podcast.keywords
     itunes:explicit= podcast.explicit ? 'yes' : 'clean'
-    itunes:image(href=podcast.imageURL)
+    itunes:image(href=podcast.baseURL + '/' + podcast.imageKey)
     itunes:owner
       itunes:name= podcast.author
       itunes:email= podcast.email
@@ -43,4 +43,4 @@ rss(
         itunes:explicit= episode.explicit ? 'yes' : 'clean'
         itunes:duration= episode.duration
         content:encoded= episode.description
-        itunes:image= episode.imageURL || podcast.imageURL
+        itunes:image= podcast.baseURL + '/' + (episode.imageKey || podcast.imageKey)
