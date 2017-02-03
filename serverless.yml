@@ -23,8 +23,8 @@ provider:
         - arn:aws:s3:::${self:custom.bucket}/*
 
 functions:
-  updateFeed:
-    handler: handler.updateFeed
+  updatePages:
+    handler: handler.updatePages
     events:
       - s3:
           bucket: ${self:custom.bucket}
@@ -38,10 +38,6 @@ functions:
           rules:
             - prefix: 'episodes/'
             - suffix: .mp3
-    environment:
-      STAGE: ${opt:stage, self:provider.stage}
-  updateHTML:
-    handler: handler.updateHTML
     environment:
       STAGE: ${opt:stage, self:provider.stage}
   updatePublish:

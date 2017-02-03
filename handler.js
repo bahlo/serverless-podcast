@@ -16,23 +16,21 @@ AWS.config.update({ region: config.region });
 
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
-module.exports.updateFeed = (event, context, callback) => {
+module.exports.updatePages = (event, context, callback) => {
   Episodes.list(s3, config)
     .then(episodes => Episodes.fetchMetadata(s3, config, episodes))
     .then(episodes => Episodes.sort(episodes))
-    .then(episodes => Templates.updateFeed(s3, config, episodes))
+    .then(episodes => {
+      return Bluebird.all([
+        Templates.updateFeed(s3, config, episodes),
+        Templates.updateIndex(s3, config, episodes),
+        Templates.updateError(s3, config),
+        Templates.updateSuccess(s3, config),
+      ])
+    })
     .then(() => { callback(null) })
     .catch(err => { callback(err); });
 };
-
-module.exports.updateHTML = (event, context, callback) => {
-  Bluebird.all([
-    Templates.updateIndex(s3, config),
-    Templates.updateError(s3, config),
-    Templates.updateSuccess(s3, config),
-  ]).then(() => { callback(null) })
-    .catch(err => { callback(err); });
-}
 
 module.exports.updatePublish = (event, context, callback) => {
   const expireDate   = Auth.expireDate(),
