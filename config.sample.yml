@@ -1,6 +1,7 @@
 bucket: my-bucket
 region: us-west-1
 accessKey: 'abcdef'
+dateFormat: YYYY-MM-DD
 
 podcast:
   title: An awesome podcast

@@ -5,14 +5,24 @@ html
   meta(name="viewport" content="width=device-width, initial-scale=1")
   link(rel="stylesheet" href="//unpkg.com/tachyons@4.6.1/css/tachyons.min.css")
   body.bg-near-white
-    article.br2.ba.dark-gray.b--black-10.mv4.w-100.w-50-m.w-25-l.mw5.center.bg-white
-      img.db.w-100.br2.br--top(src='/' + imageKey alt=title)
-      div.pa2.ph3-ns.pb3-ns
-        div.dt.w-100.mt1
-          div.dtc
-            h1.f5.f4-ns.mv0= title
-        p.f6.lh-copy.measure.mt2.mid-gray= description
-        if iTunesURL
-          a.f6.link.dim.br1.ph3.pv2.mb2.dib.white.bg-black.mr1(href=iTunesURL) iTunes
-        a.f6.link.dim.br1.ph3.pv2.mb2.dib.white.bg-orange(href=baseURL+'/feed.xml') Feed
+    main.cf.center.w-75-l.w-100
+      section.ph4.fl.w-third-ns.w-100
+        article.br2.ba.dark-gray.b--black-10.bg-white.mv4
+          img.db.w-100.br2.br--top(src='/' + imageKey alt=title)
+          div.pa2.ph3-ns.pb3-ns
+            div.dt.w-100.mt1
+              div.dtc
+                h1.f5.f4-ns.mv0= title
+            p.f6.lh-copy.measure.mt2.mid-gray= description
+            if iTunesURL
+              a.f6.link.dim.br1.ph3.pv2.mb2.dib.white.bg-black.mr1(href=iTunesURL) iTunes
+            a.f6.link.dim.br1.ph3.pv2.mb2.dib.white.bg-orange(href=baseURL+'/feed.xml') Feed
+      section.ph4.fl.w-two-thirds-ns.w-100
+        each episode in episodes
+          article.br2.ba.dark-gray.b--black-10.bg-white.mv4.pa3
+            h1.f6.f5-ns.mv0
+              = episode.title
+              span.mh2.f6.light-silver.normal.fr= episode.author + ', ' + episode.prettyDate
+            p.f5.lh-copy.measure.mid-gray.mt1.mb2= episode.description
+            audio(controls src=episode.url).w-100
     include includes/footer
