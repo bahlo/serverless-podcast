@@ -25,4 +25,7 @@ html
               span.mh2.f6.light-silver.normal.fr= episode.author + ', ' + episode.prettyDate
             p.f5.lh-copy.measure.mid-gray.mt1.mb2= episode.description
             audio(controls src=episode.url).w-100
+              | Your browser does not support the
+              code audio
+              | element.
     include includes/footer
